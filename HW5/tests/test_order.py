@@ -33,3 +33,22 @@ def test_country_order(driver):
 
         cancel = get_element(driver, (By.CSS_SELECTOR, "button[name='cancel']"))
         cancel.click()
+
+
+@pytest.mark.usefixtures("login_to_admin")
+def test_country_order_geo_zones(driver):
+    driver.get("http://localhost/litecart/admin/?app=geo_zones&doc=geo_zones")
+
+    rows = get_elements(driver, (By.CSS_SELECTOR, 'tbody .row'))
+    for i in range(1, len(rows)+1):
+        country = get_element(driver, (By.CSS_SELECTOR, f'.dataTable tbody tr:nth-child({i+1}) td:nth-child(3) a'))
+        country.click()
+
+        zones = get_elements(driver, (By.CSS_SELECTOR, '#table-zones tr td:nth-child(3) select option[selected]'))
+        last_zone_name = ""
+        for z in zones:
+            zone_name = z.get_attribute('textContent')
+            assert zone_name >= last_zone_name
+
+        cancel = get_element(driver, (By.CSS_SELECTOR, "button[name='cancel']"))
+        cancel.click()
