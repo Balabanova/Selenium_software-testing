@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 import random
 import string
-
+import time
 
 def generate_random_num():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
@@ -30,8 +30,8 @@ def test_add_new_user(driver):
     get_element(driver, (By.CSS_SELECTOR, 'input[name="city"]')).send_keys(generate_random_num())
 
     # Страна (США)
-    country = get_element(driver, (By.CSS_SELECTOR, 'span.selection'))
-    ActionChains(driver).click(country).send_keys("United States").send_keys(Keys.ENTER).perform()
+    get_element(driver, (By.CSS_SELECTOR, 'select[name="country_code"] ~ span span.select2-selection__arrow')).click()
+    get_element(driver, (By.CSS_SELECTOR, 'input.select2-search__field')).send_keys("United States" + Keys.ENTER)
 
     # Штат (Аляска)
     select = Select(get_element(driver, (By.CSS_SELECTOR, 'select[name="zone_code"]')))
