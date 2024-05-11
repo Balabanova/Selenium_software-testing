@@ -15,21 +15,25 @@ def get_prices_info(product):
     if not reg_price:
         pytest.fail("Элемент 'Обычная цена (зачеркнутый текст)' не найден")
     reg_price_text = reg_price.get_attribute('textContent')
+    reg_price_int = float(re.sub("[$|€]", "", reg_price_text))
     reg_price_color = reg_price.value_of_css_property('color')
     r_color_type, r_color = get_color(reg_price_color)
-    reg_price_size = reg_price.value_of_css_property('font-size')
+    reg_price_size_text = reg_price.value_of_css_property('font-size')
+    reg_price_size = float(re.sub("px", "", reg_price_size_text))
 
     # (ПРОВЕРКА Г) Пытаемся найти <strong> элемент (жирный шрифт)
     camp_price = get_element(product, (By.CSS_SELECTOR, '.price-wrapper strong.campaign-price'))
     if not camp_price:
         pytest.fail("Элемент 'Акционная цена (жирный шрифт)' не найден")
     camp_price_text = camp_price.get_attribute('textContent')
+    camp_price_int = float(re.sub("[$|€]", "", camp_price_text))
     camp_price_color = camp_price.value_of_css_property('color')
     c_color_type, c_color = get_color(camp_price_color)
-    camp_price_size = camp_price.value_of_css_property('font-size')
+    camp_price_size_text = camp_price.value_of_css_property('font-size')
+    camp_price_size = float(re.sub("px", "", camp_price_size_text))
 
-    return {"reg_text": reg_price_text, "reg_size": reg_price_size, "reg_color_type": r_color_type, "reg_color": r_color}, \
-           {"camp_text": camp_price_text, "camp_size": camp_price_size, "camp_color_type": c_color_type, "camp_color": c_color}
+    return {"reg_text": reg_price_int, "reg_size": reg_price_size, "reg_color_type": r_color_type, "reg_color": r_color}, \
+           {"camp_text": camp_price_int, "camp_size": camp_price_size, "camp_color_type": c_color_type, "camp_color": c_color}
 
 
 def get_color(color):
