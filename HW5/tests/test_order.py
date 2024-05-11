@@ -14,6 +14,7 @@ def test_country_order(driver):
         country = get_element(row, (By.CSS_SELECTOR, 'td:nth-child(5) a'))
         country_name = country.get_attribute('textContent')
         assert country_name >= last_country_name
+        last_country_name = country_name
 
         country_zone = get_elements(row, (By.CSS_SELECTOR, 'td:nth-child(6)'))
         country_zone_num = country_zone[0].get_attribute('textContent')
@@ -24,12 +25,13 @@ def test_country_order(driver):
         zone = get_element(driver, (By.XPATH, f'.//table[@class="dataTable"]//a[contains(text(), "{l}")]'))
         zone.click()
 
-        ch_rows = get_elements(driver, (By.CSS_SELECTOR, 'tbody .row'))
+        ch_rows = get_elements(driver, (By.CSS_SELECTOR, 'tbody .dataTable td:nth-child(3) input[type="hidden"]'))
         last_ch_country_name = ""
         for ch_row in ch_rows:
-            ch_country = get_element(ch_row, (By.CSS_SELECTOR, 'td:nth-child(5) '))
+            ch_country = get_element(ch_row, (By.XPATH, '..'))
             ch_country_name = ch_country.get_attribute('textContent')
             assert ch_country_name >= last_ch_country_name
+            last_ch_country_name = ch_country_name
 
         cancel = get_element(driver, (By.CSS_SELECTOR, "button[name='cancel']"))
         cancel.click()
@@ -49,6 +51,7 @@ def test_country_order_geo_zones(driver):
         for z in zones:
             zone_name = z.get_attribute('textContent')
             assert zone_name >= last_zone_name
+            last_zone_name = zone_name
 
         cancel = get_element(driver, (By.CSS_SELECTOR, "button[name='cancel']"))
         cancel.click()
