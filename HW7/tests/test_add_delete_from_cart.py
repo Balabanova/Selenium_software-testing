@@ -1,6 +1,7 @@
 from base_functions import wait_element_disappearance
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+import time
 
 
 def test_cart(driver):
@@ -15,7 +16,7 @@ def test_cart(driver):
         button = driver.find_element(By.CSS_SELECTOR, 'button[value="Add To Cart"]')
         button.click()
         # Получаем элемент корзины, если товаров в ней на 1 больше, чем было
-        g = driver.find_element(By.XPATH, f'//*[@id="cart"]/a[2]/span[@class="quantity" and contains(text(), "{i+1}")]')
+        g = driver.find_elements(By.XPATH, f'//*[@id="cart"]/a[2]/span[@class="quantity" and contains(text(), "{i+1}")]')
         # Если количество товара в корзине не соответствует предыдущему условию,
         # проверяем товар на наличие дополнительных и обязательных к заполнению опций
         if not g:
@@ -26,9 +27,9 @@ def test_cart(driver):
                 select.select_by_value("Small")
             button.click()
             # Еще раз получаем элемент корзины
-            g = driver.find_element(By.XPATH, f'//*[@id="cart"]/a[2]/span[@class="quantity" and contains(text(), "{i + 1}")]')
+            g = driver.find_elements(By.XPATH, f'//*[@id="cart"]/a[2]/span[@class="quantity" and contains(text(), "{i + 1}")]')
         # Проверяем, что элемент корзины с верным числом товаров в ней найден
-        assert g
+        assert g[0]
 
     # Переходим в карзину
     driver.find_element(By.CSS_SELECTOR, "#cart").click()
@@ -36,5 +37,7 @@ def test_cart(driver):
     items = driver.find_elements(By.CSS_SELECTOR, '#order_confirmation-wrapper tbody tr:not(.header) .item')
     # Поочередно удаляем товары из корзины и проверяем, что таблица заказа обновилась
     for i in range(0, len(items)):
-        driver.find_element(By.CSS_SELECTOR, 'button[name="remove_cart_item"]').click()
+        b = driver.find_element(By.CSS_SELECTOR, 'button[name="remove_cart_item"]')
+        b.click()
+        wait_element_disappearance(driver, b)
         assert wait_element_disappearance(driver, items[i])
