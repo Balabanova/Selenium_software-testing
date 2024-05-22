@@ -4,6 +4,10 @@ from selenium.webdriver.support.ui import Select
 import time
 
 
+def get_items_from_table(driver):
+    return driver.find_elements(By.CSS_SELECTOR, '#order_confirmation-wrapper tbody tr:not(.header) .item')
+
+
 def test_cart(driver):
     driver.implicitly_wait(3)
 
@@ -34,10 +38,11 @@ def test_cart(driver):
     # Переходим в карзину
     driver.find_element(By.CSS_SELECTOR, "#cart").click()
     # Находи все элементы, содержащиеся в строках таблицы заказа
-    items = driver.find_elements(By.CSS_SELECTOR, '#order_confirmation-wrapper tbody tr:not(.header) .item')
+    items_count = len(get_items_from_table(driver))
     # Поочередно удаляем товары из корзины и проверяем, что таблица заказа обновилась
-    for i in range(0, len(items)):
+    for i in range(0, items_count):
+        item = get_items_from_table(driver)[0]
         b = driver.find_element(By.CSS_SELECTOR, 'button[name="remove_cart_item"]')
         b.click()
         wait_element_disappearance(driver, b)
-        assert wait_element_disappearance(driver, items[i])
+        assert wait_element_disappearance(driver, item)
